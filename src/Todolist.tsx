@@ -1,5 +1,6 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from 'react'
+import React, {ChangeEvent} from 'react'
 import {FilterValuesType} from './App';
+import AddItemForm from './AddItemForm';
 
 export type TaskType = {
     id: string
@@ -20,33 +21,12 @@ type PropsType = {
 }
 
 export function Todolist(props: PropsType) {
-
-    let [title, setTitle] = useState('')
-    let [error, setError] = useState<string | null>(null)
-
-    const addTask = () => {
-        if (title.trim() !== '') {
-            props.addTask(title.trim(), props.id)
-            setTitle('')
-        } else {
-            setError('Title is required')
-        }
-
+    const addTask = (title: string) => {
+        props.addTask(title, props.id)
     }
 
-    const removeTdolist = () => {
+    const removeTodolist = () => {
         props.removeTodolist(props.id)
-    }
-
-    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        setTitle(event.currentTarget.value)
-    }
-
-    const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-        setError(null)
-        if (event.key === 'Enter') {
-            addTask()
-        }
     }
 
     const onAllClickHandler = () => {
@@ -60,26 +40,16 @@ export function Todolist(props: PropsType) {
 
     }
 
-
     return (
         <div>
             <h3>
                 {props.title}
-                <button onClick={removeTdolist}>
+                <button onClick={removeTodolist}>
                     x
                 </button>
             </h3>
 
-            <div>
-                <input
-                    value={title}
-                    onChange={onChangeHandler}
-                    onKeyDown={onKeyPressHandler}
-                    className={error ? 'error' : ''}
-                />
-                <button onClick={addTask}>+</button>
-                {error && <div className="error-message">{error}</div>}
-            </div>
+            <AddItemForm addItem={addTask}/>
             <ul>
                 {props.tasks.map((task) => {
                     const onClickHandler = () => {
