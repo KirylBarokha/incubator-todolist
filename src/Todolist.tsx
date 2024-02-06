@@ -19,6 +19,8 @@ type PropsType = {
     changeTaskStatus: (id: string, isDone: boolean, todolistId: string) => void
     filter: string
     removeTodolist: (id: string) => void
+    changeTaskTitle: (id: string, newTitle: string, todolistId: string) => void
+    changeTodolistTitle: (id: string, newTitle: string) => void
 }
 
 export function Todolist(props: PropsType) {
@@ -28,6 +30,10 @@ export function Todolist(props: PropsType) {
 
     const removeTodolist = () => {
         props.removeTodolist(props.id)
+    }
+
+    const changeTodolistTitle = (title: string) => {
+        props.changeTodolistTitle(props.id, title);
     }
 
     const onAllClickHandler = () => {
@@ -44,7 +50,7 @@ export function Todolist(props: PropsType) {
     return (
         <div>
             <h3>
-                {props.title}
+                <EditableSpan value={props.title} onChange={changeTodolistTitle}/>
                 <button onClick={removeTodolist}>
                     x
                 </button>
@@ -62,11 +68,20 @@ export function Todolist(props: PropsType) {
                         props.changeTaskStatus(task.id, newIsDoneValue, props.id)
                     }
 
+                    const onTitleChangeHandler = (newValue: string) => {
+                        props.changeTaskTitle(task.id, newValue, props.id);
+                    }
+
                     return (
-                        <EditableSpan onClickHandler={onClickHandler}
-                                      onChangeHandler={onChangeHandler}
-                                      task={task}
-                        />
+                        <li key={task.id} className={task.isDone ? 'is-done' : ''}>
+                            <input type="checkbox" checked={task.isDone} onChange={onChangeHandler}/>
+                            <EditableSpan value={task.title}
+                                          onChange={onTitleChangeHandler}
+                            />
+                            <button onClick={onClickHandler}>
+                                x
+                            </button>
+                        </li>
                     )
                 })}
             </ul>

@@ -1,22 +1,33 @@
-import React, {ChangeEvent} from 'react';
-import {TaskType} from './Todolist';
+import React, {ChangeEvent, useState} from 'react';
 
 type EditableSpanPropsType = {
-    onChangeHandler : (event: ChangeEvent<HTMLInputElement>) => void
-    onClickHandler : () => void
-    task: TaskType
+    value: string
+    onChange :(newTitle : string) => void
 }
-const EditableSpan = (props : EditableSpanPropsType) => {
+const EditableSpan = (props: EditableSpanPropsType) => {
+    let [editMode, setEditMode] = useState(false)
+    const [title, setTitle] = useState(props.value)
+
+    const activateEditMode = () => {
+        setEditMode(true)
+        setTitle(props.value)
+    }
+
+    const activateViewMode = () => {
+        setEditMode(false)
+        props.onChange(title)
+    }
+
+    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.currentTarget.value)
+    }
 
     return (
-        <li key={props.task.id} className={props.task.isDone ? 'is-done' : ''}>
-            <input type="checkbox" checked={props.task.isDone} onChange={props.onChangeHandler}/>
-            <span>{props.task.title}</span>
-            <button onClick={props.onClickHandler}>
-                x
-            </button>
-        </li>
+        editMode
+            ? <input value={title} onBlur={activateViewMode} onChange={onChangeHandler} autoFocus/>
+            : <span onDoubleClick={activateEditMode}>{title}</span>
     )
-}
 
+
+}
 export default EditableSpan
